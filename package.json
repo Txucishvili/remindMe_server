@@ -1,0 +1,44 @@
+{
+  "name": "remindeme_node",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "express": "cross-env NODE_ENV=development nodemon --inspect index.js --exec babel-node"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@babel/core": "^7.5.5",
+    "@babel/node": "^7.5.5",
+    "@babel/preset-env": "^7.5.5",
+    "axios": "^0.19.0",
+    "body-parser": "^1.19.0",
+    "express": "^4.17.1",
+    "express-async-await": "^1.1.0",
+    "imdb-api": "^4.0.3",
+    "jsdom": "^15.1.1",
+    "lodash": "^4.17.15",
+    "morgan": "^1.9.1",
+    "node-fetch": "^2.6.0",
+    "nodemon": "^1.19.1"
+  },
+  "dependencies": {
+    "@babel/plugin-proposal-export-default-from": "^7.5.2",
+    "@babel/plugin-proposal-export-namespace-from": "^7.5.2",
+    "@graphql-modules/core": "^0.7.10",
+    "@graphql-modules/utils": "^0.4.0",
+    "apollo-server-express": "^2.4.8",
+    "bcrypt-nodejs": "0.0.3",
+    "cheerio": "^1.0.0-rc.3",
+    "cors": "^2.8.5",
+    "graphql": "^14.5.3",
+    "graphql-tools": "^4.0.5",
+    "jsonwebtoken": "^8.5.1",
+    "merge-graphql-schemas": "^1.7.0",
+    "mongoose": "^5.6.11",
+    "node-html-parser": "^1.1.16",
+    "node-movie": "^3.0.0",
+    "request": "latest"
+  }
+}
