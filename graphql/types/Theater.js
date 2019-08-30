@@ -1,16 +1,6 @@
 import {gql} from 'apollo-server-express';
 
-const TheaterTypes = gql`
-    directive @lower on FIELD_DEFINITION
-    directive @isAuth on FIELD_DEFINITION
-    directive @hasRole(role: Role = USER) on OBJECT | FIELD_DEFINITION
-    
-    enum Role {
-        ADMIN
-        OWNER
-        USER
-    }
-    
+const TheaterTypes = gql`  
     type ResultObjItem {
         id: String,
         isAdded: Boolean
@@ -32,8 +22,8 @@ const TheaterTypes = gql`
 
     type Query {
         updateTheater: [TheaterItem]!
-        fetchTheater: [TheaterItem]!
-        fetchMovieList: [TheaterItem]! @isAuth
+        fetchTheater: [TheaterItem]!  @isAuth @roles(requires: ADMIN)
+        fetchMovieList: [TheaterItem]!
     }
 `;
 

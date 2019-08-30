@@ -1,6 +1,17 @@
 import {gql} from 'apollo-server-express';
 
 const AuthTypes = gql`
+    directive @isAuth on FIELD_DEFINITION
+    directive @roles(
+        requires: Roles = ADMIN,
+    ) on OBJECT | FIELD_DEFINITION
+
+    enum Roles {
+        ADMIN
+        USER
+        FRIEND
+    }
+
     input SignInInput {
         email: String!
         password: String!
@@ -29,10 +40,6 @@ const AuthTypes = gql`
     type Mutation {
         signUp(data: SignUpInput!): SignInResponse!
         signIn(data: SignInInput!): SignInResponse!
-    }
-    
-    type Query {
-        me: SignInResponse!,
     }
 `;
 

@@ -1,44 +1,18 @@
-import bcrypt from 'bcrypt-nodejs';
-import jwt from 'jsonwebtoken';
-
-const saltRounds = 10;
-
-const secret = 'secret_code_area';
-const issuer = 'app_init';
-const audience = 'app_record';
-
-const genSalt = (salt) => {
-  return bcrypt.genSaltSync(salt);
-};
-
-const genHash = (password, salt) => {
-  return bcrypt.hashSync(password, salt);
-};
-
-const comparePassword = (password, compare) => {
-  return bcrypt.compareSync(password, compare);
-};
-
-const genToken = (data) => {
-  return jwt.sign(data, secret, {
-    issuer,
-    audience,
-  });
-};
-
+import {UserInputError} from "apollo-server-express";
+import AuthenticationService from "../../services/Authentication.service";
 
 const AuthResolvers = {
   Mutation: {
-    signUp: async (parent, {data}, {db}) => {
+    signUp: async (parent, {data}, {user, db}) => {
+      console.log('hit');
       let {firstName, lastName, email, password} = data;
-
       const userExists = await db.Users.findOne({email});
 
       if (userExists) {
         throw new Error('User already exist');
       }
 
-      let passwordHash = await genHash(password, genSalt(saltRounds));
+      let passwordHash = await AuthenticationService.genHash(password, AuthenticationService.genSalt(saltRounds));
       const saveData = {
         firstName,
         lastName,
@@ -46,20 +20,20 @@ const AuthResolvers = {
         email
       };
 
-      const user = await new db.Users(saveData).save();
-      user._id = user._id.toString();
+      const _user = await new db.Users(saveData).save();
+      _user._id = _user._id.toString();
 
-      if (!user) {
-        throw new Error('Invalid credentials')
+      if (!_user) {
+        throw new UserInputError('Invalid credentials');
       }
 
-      const token = genToken({id: user._id});
+      const token = AuthenticationService.genToken({id: _user._id});
 
       return {
-        firstName: user.firstName,
-        lastName: user.lastName,
-        email: user.email,
-        l_visit: user.l_visit,
+        firstName: _user.firstName,
+        lastName: _user.lastName,
+        email: _user.email,
+        l_visit: _user.l_visit,
         auth: {token},
       }
     },
@@ -69,12 +43,12 @@ const AuthResolvers = {
       console.log('user', user);
 
       if (!user) {
-        throw new Error('Invalid credentials');
-      } else if(!comparePassword(password, user.password)) {
-        throw new Error('Invalid credentials');
+        throw new UserInputError('Invalid credentials');
+      } else if(!AuthenticationService.comparePassword(password, user.password)) {
+        throw new UserInputError('Invalid credentials');
       }
 
-      const token = user ? genToken({id: user._id}) : 'nullls';
+      const token = user ? AuthenticationService.genToken({id: user._id}) : 'nullls';
 
       return {
         firstName: user.firstName,

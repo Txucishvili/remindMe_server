@@ -1,27 +1,28 @@
 import {FetchAndCollectData} from "../../controllers/TheaterController/TheaterController";
-import {Theater} from "../../mongoose/schemas";
+import {combineResolvers} from 'graphql-resolvers';
+import {authenticated} from "../helpers/Auth.guard";
 
 const TheaterResolvers = {
   Query: {
-    updateTheater: async (parent, args, context) => {
+    updateTheater: authenticated(async (root, args, {user, db}) => {
       const collectedData = await FetchAndCollectData();
       const ValidData = collectedData.filter(item => item.result.adjaranet && item.result.iMovie);
 
       console.log('Done Fetching');
 
-      const theaterDB = await context.Theater.find();
+      const theaterDB = await context.db.Theater.find();
       console.log('Done DB Loading', theaterDB.length);
 
       if (!theaterDB.length) {
         for (let item of ValidData) {
-          await new context.Theater(item).save();
+          await new context.db.Theater(item).save();
         }
         console.log('Done DB Saving');
       }
 
       console.log('Start DB Receiving');
 
-      const theaterItems = await context.Theater.find();
+      const theaterItems = await context.db.Theater.find();
 
       theaterItems.map((item, i) => {
         const newTarget = ValidData[i];
@@ -32,27 +33,27 @@ const TheaterResolvers = {
           item.save();
         }
 
-        if (!item.id !== newTarget.id) {
-          console.log('not same ID items - ', newTarget.id);
-          item.id = newTarget.id;
-          item.save();
-        }
+        // if (!item.id !== newTarget.id) {
+        //   console.log('not same ID items - ', newTarget.id);
+        //   item.id = newTarget.id;
+        //   item.save();
+        // }
 
         return item;
       });
 
       return theaterItems;
-    },
-    fetchTheater: async (parent, args, context) => {
-      const theaterItems = await Theater.find();
+    }),
+    fetchTheater: authenticated(async (root, args, {user, db}) => {
+        const theaterItems = db.Theater ? await db.Theater.find() : null;
 
-      theaterItems.map(item => {
-        item._id = item._id.toString();
-        return item;
-      });
+        if (theaterItems) theaterItems.map(item => {
+          item._id = item._id.toString();
+          return item;
+        });
 
-      return theaterItems;
-    },
+        return theaterItems;
+      }),
   }
 };
 
