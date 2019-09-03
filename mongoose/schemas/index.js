@@ -1,5 +1,5 @@
 import Users from './models/Users';
-import Posts from './models/Posts';
 import Theater from './models/Theater';
+import Tokens from './models/Tokens';
 
-export {Users, Posts, Theater};
+export {Users, Theater, Tokens};

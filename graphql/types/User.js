@@ -1,8 +1,6 @@
 import {gql} from 'apollo-server-express';
 
 const UserTypes = gql`
-    directive @isAuth on FIELD_DEFINITION
-
     type User {
         _id: String
         firstName: String
@@ -22,20 +20,25 @@ const UserTypes = gql`
     }
 
     type Query {
-        AllUsers: [User]! @isAuth,
-        getUser(token: String!): UserResponse
+        AllUsers: [User]! @isAuth @roles(requires: ADMIN)
+        getUser(id: String!): UserResponse  @isAuth @roles(requires: ADMIN)
+        me: UserResponse @isAuth
     }
 
-    type Mutation {
-        CreateUser (
-            firstName: String
-            lastName: String
-            email: String
-            password: String
-            created: String
-            modified: String
-        ): User,
-        RemoveUser(id: String): User
+    type SignInResponse {
+        firstName: String!,
+        lastName: String!
+        email: String!,
+        auth: Token,
+        l_status: String
+    }
+
+    input SignUpInput {
+        firstName: String!,
+        lastName: String!
+        email: String!,
+        password: String!
+        created: String!
     }
 `;
 
