@@ -2,6 +2,22 @@ import {UserInputError} from "apollo-server-express";
 import AuthenticationService from "../../services/Authentication.service";
 
 const AuthResolvers = {
+  Query: {
+    logOut: async (parent, {args}, {user, db}) => {
+      const tokenDB = db.Tokens;
+      const findToken = await tokenDB.find({userId: user.id});
+      console.log('findToken', findToken);
+      console.log('user._id', user);
+      if (findToken.length) {
+        findToken[0].remove();
+      }
+
+      return {
+        data: 'successfully logged out'
+      }
+
+    }
+  },
   Mutation: {
     signUp: async (parent, {data}, {user, db}) => {
       console.log('hit');
@@ -12,7 +28,8 @@ const AuthResolvers = {
         throw new Error('User already exist');
       }
 
-      let passwordHash = await AuthenticationService.genHash(password, AuthenticationService.genSalt(saltRounds));
+      let passwordHash = await AuthenticationService.genHash(password);
+
       const saveData = {
         firstName,
         lastName,
@@ -27,14 +44,26 @@ const AuthResolvers = {
         throw new UserInputError('Invalid credentials');
       }
 
+      const tokenDB = await db.Tokens.find({userId: _user._id});
+      console.log('is token found', tokenDB);
+
       const token = AuthenticationService.genToken({id: _user._id});
+
+      const tokenData = {
+        token,
+        userId: _user._id
+      };
+
+      const saveToken = await new db.Tokens(tokenData).save();
 
       return {
         firstName: _user.firstName,
         lastName: _user.lastName,
         email: _user.email,
         l_visit: _user.l_visit,
-        auth: {token},
+        auth: {
+          token: saveToken
+        },
       }
     },
     signIn: async (parent, {data}, {db}) => {
@@ -44,18 +73,34 @@ const AuthResolvers = {
 
       if (!user) {
         throw new UserInputError('Invalid credentials');
-      } else if(!AuthenticationService.comparePassword(password, user.password)) {
+      } else if (!AuthenticationService.comparePassword(password, user.password)) {
         throw new UserInputError('Invalid credentials');
       }
 
+      const tokenDB = db.Tokens;
+
       const token = user ? AuthenticationService.genToken({id: user._id}) : 'nullls';
+      const tokenData = {
+        token,
+        userId: user._id
+      };
+
+      const findToken = await tokenDB.find({userId: user._id});
+
+      if (findToken.length) {
+        findToken[0].remove();
+      }
+
+      const newToken = await new tokenDB(tokenData).save();
 
       return {
         firstName: user.firstName,
         lastName: user.lastName,
         email: user.email,
         l_visit: user.l_visit,
-        auth: {token},
+        auth: {
+          token: newToken.token
+        },
       }
     }
   }

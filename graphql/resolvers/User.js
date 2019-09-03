@@ -31,7 +31,7 @@ const UserResolver = {
       })),
     me: authenticated(async (root, args, context) => {
       const userDB = await context.db.Users.findById(context.user.id);
-      const token = context.user ? AuthenticationService.genToken({id: context.user.id}) : 'nullls';
+      const token = context.user ? AuthenticationService.genToken({id: context.user.id}) : '';
 
       const model = {
         firstName: userDB.firstName,

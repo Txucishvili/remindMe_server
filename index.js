@@ -6,7 +6,7 @@ import mongoose from 'mongoose';
 import {ApolloServer} from 'apollo-server-express';
 import Routers from './controllers';
 import {schema} from './graphql/index';
-import {Users, Theater} from './mongoose/schemas';
+import {Users, Theater, Tokens} from './mongoose/schemas';
 import AuthenticationService from "./services/Authentication.service";
 
 const mongooseURL = 'mongodb://opt:remindME122@ds213538.mlab.com:13538/remindme';
@@ -36,21 +36,25 @@ db.once("open", () => console.log("🗂 MongoDB connected"));
 const server = new ApolloServer({
   schema,
   context: async ({req}) => {
-    const user = await AuthenticationService.getUser(req.headers, Users);
+    const user = await AuthenticationService.getUser(req.headers, {Users, Tokens});
     let validModels = {};
 
     if (!user) {
       console.warn('Not sign in');
       validModels = {
-        Users
+        Users,
+        Tokens
       };
     } else {
       user.role = 'ADMIN';
       validModels = {
         Users,
+        Tokens,
         Theater
       };
     }
+
+    console.log('USER FETCH: ', user);
 
     return {
       user,

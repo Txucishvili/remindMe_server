@@ -27,12 +27,16 @@ class AuthenticationService {
 
   static getUser = async (headers, db) => {
     const token = headers.authorization || '';
-
+    const checkTokenDB = await db.Tokens.findOne({token});
     const decodedToken = await this.jsonDecode(token);
 
-    if (!decodedToken) return null;
+    if (!checkTokenDB) {
+      return null;
+    } else if (!decodedToken) {
+      return null;
+    }
 
-    const user = await db.findById(decodedToken.id);
+    const user = await db.Users.findById(decodedToken.id);
     const {firstName, lastName, _id, email, l_status} = user;
 
     const userModel = {
@@ -46,13 +50,13 @@ class AuthenticationService {
     return userModel;
   };
 
-
   static genSalt = (salt) => {
     return bcrypt.genSaltSync(salt);
   };
 
-  static genHash = (password, salt) => {
-    return bcrypt.hashSync(password, salt);
+  static genHash = (password, salt = this.saltRounds) => {
+    const genSalt = AuthenticationService.genSalt(salt);
+    return bcrypt.hashSync(password, genSalt);
   };
 
   static comparePassword = (password, compare) => {
@@ -62,7 +66,7 @@ class AuthenticationService {
   static genToken = (data) => {
     return jwt.sign(data, this.secret, {
       issuer: this.issuer,
-      audience: this.audience,
+      audience: this.audience
     });
   };
 

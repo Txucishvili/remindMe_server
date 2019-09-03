@@ -10,19 +10,19 @@ const TheaterResolvers = {
 
       console.log('Done Fetching');
 
-      const theaterDB = await context.db.Theater.find();
+      const theaterDB = await db.Theater.find();
       console.log('Done DB Loading', theaterDB.length);
 
       if (!theaterDB.length) {
         for (let item of ValidData) {
-          await new context.db.Theater(item).save();
+          await new db.Theater(item).save();
         }
         console.log('Done DB Saving');
       }
 
       console.log('Start DB Receiving');
 
-      const theaterItems = await context.db.Theater.find();
+      const theaterItems = await db.Theater.find();
 
       theaterItems.map((item, i) => {
         const newTarget = ValidData[i];
@@ -44,7 +44,7 @@ const TheaterResolvers = {
 
       return theaterItems;
     }),
-    fetchTheater: authenticated(async (root, args, {user, db}) => {
+    fetchTheater: async (root, args, {user, db}) => {
         const theaterItems = db.Theater ? await db.Theater.find() : null;
 
         if (theaterItems) theaterItems.map(item => {
@@ -53,7 +53,7 @@ const TheaterResolvers = {
         });
 
         return theaterItems;
-      }),
+      }
   }
 };
 

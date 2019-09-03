@@ -36,6 +36,14 @@ const AuthTypes = gql`
         auth: Token,
         l_status: String
     }
+    
+    type LogOutResponse {
+        data: String
+    }
+    
+    type Query {
+        logOut: LogOutResponse
+    }
 
     type Mutation {
         signUp(data: SignUpInput!): SignInResponse!
