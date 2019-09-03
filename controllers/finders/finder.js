@@ -121,7 +121,7 @@ const adjaranet_search_advanced = (data) => {
 };
 
 const adjaranet_single_check = (url) => {
-  const URL = url + '&js=1';
+  const URL = 'https://' + url.replace('//', '') + '&js=1';
   const wordToMatch = 'გამოშვების წელი:';
 
   return new Promise(async (resolve, reject) => {
