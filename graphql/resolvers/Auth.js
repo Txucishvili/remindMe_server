@@ -4,13 +4,14 @@ import AuthenticationService from "../../services/Authentication.service";
 const AuthResolvers = {
   Query: {
     logOut: async (parent, {args}, {user, db}) => {
-      const tokenDB = db.Tokens;
-      const findToken = await tokenDB.find({userId: user.id});
-      console.log('findToken', findToken);
+      // const tokenDB = db.Tokens;
+      // const findToken = await tokenDB.find({userId: user.id});
+      // console.log('findToken', findToken);
       console.log('user._id', user);
-      if (findToken.length) {
-        findToken[0].remove();
-      }
+
+      // if (findToken.length) {
+      //   findToken[0].remove();
+      // }
 
       return {
         data: 'successfully logged out'
@@ -20,12 +21,15 @@ const AuthResolvers = {
   },
   Mutation: {
     signUp: async (parent, {data}, {user, db}) => {
-      console.log('hit');
+      console.log('signUp Hit');
       let {firstName, lastName, email, password} = data;
       const userExists = await db.Users.findOne({email});
 
       if (userExists) {
-        throw new Error('User already exist');
+        throw new Error({
+          type: 1,
+          message: 'User already exist'
+        });
       }
 
       let passwordHash = await AuthenticationService.genHash(password);
@@ -41,20 +45,22 @@ const AuthResolvers = {
       _user._id = _user._id.toString();
 
       if (!_user) {
-        throw new UserInputError('Invalid credentials');
+        throw new UserInputError('Smth goes wrong');
       }
 
-      const tokenDB = await db.Tokens.find({userId: _user._id});
-      console.log('is token found', tokenDB);
+      // const tokenDB = await db.Tokens.find({userId: _user._id});
+      // console.log('is token found', tokenDB);
 
-      const token = AuthenticationService.genToken({id: _user._id});
-
-      const tokenData = {
-        token,
-        userId: _user._id
+      const tokenConfiguration = {
+        id: _user._id,
+        roles: []
       };
+      const tokenExpDate = Math.floor(Date.now() / 1000) + (60 * 60);
+      const genToken = await AuthenticationService.genToken(tokenConfiguration, tokenExpDate);
 
-      const saveToken = await new db.Tokens(tokenData).save();
+      const token = _user ? genToken : null;
+
+      // const saveToken = await new db.Tokens(tokenData).save();
 
       return {
         firstName: _user.firstName,
@@ -62,36 +68,41 @@ const AuthResolvers = {
         email: _user.email,
         l_visit: _user.l_visit,
         auth: {
-          token: saveToken
+          token: token
         },
       }
     },
     signIn: async (parent, {data}, {db}) => {
       const {email, password} = data;
-      const user = await db.Users.findOne({email: email});
-      console.log('user', user);
+      const user = email ? await db.Users.findOne({email: email}) : false;
+      const passwordMatches = user ? await AuthenticationService.comparePassword(password, user.password) : false;
+
+      console.log('passwordMatches', passwordMatches);
 
       if (!user) {
-        throw new UserInputError('Invalid credentials');
-      } else if (!AuthenticationService.comparePassword(password, user.password)) {
-        throw new UserInputError('Invalid credentials');
+        return new UserInputError('User not found');
+      } else if (!passwordMatches) {
+        return new UserInputError('Invalid credentials');
       }
 
-      const tokenDB = db.Tokens;
-
-      const token = user ? AuthenticationService.genToken({id: user._id}) : 'nullls';
-      const tokenData = {
-        token,
-        userId: user._id
+      // const tokenDB = db.Tokens;
+      const tokenConfiguration = {
+        id: user._id,
+        roles: []
       };
+      const tokenExpDate = Math.floor(Date.now() / 1000) + (60 * 60);
+      const genToken = await AuthenticationService.genToken(tokenConfiguration, tokenExpDate);
 
-      const findToken = await tokenDB.find({userId: user._id});
+      const token = user ? genToken : null;
 
-      if (findToken.length) {
-        findToken[0].remove();
-      }
 
-      const newToken = await new tokenDB(tokenData).save();
+      // const findToken = await tokenDB.find({userId: user._id});
+      //
+      // if (findToken.length) {
+      //   findToken[0].remove();
+      // }
+
+      // const newToken = await new tokenDB(tokenData).save();
 
       return {
         firstName: user.firstName,
@@ -99,7 +110,7 @@ const AuthResolvers = {
         email: user.email,
         l_visit: user.l_visit,
         auth: {
-          token: newToken.token
+          token: token
         },
       }
     }

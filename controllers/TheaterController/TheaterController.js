@@ -60,12 +60,3 @@ export const routerExporter = {
   handling: TheaterFetch
 };
 
-export const FetchAndCollectData = async () => {
-  const FirstLevelData = await fetchHandler(MovieDB_URL)
-    .then(resp => resp)
-    .catch(error => error);
-
-  const collectPirateData = await checkItems(FirstLevelData.results);
-
-  return collectPirateData;
-};

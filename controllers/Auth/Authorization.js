@@ -1,20 +1,29 @@
 import jwt from 'jsonwebtoken';
+import AuthenticationService from "../../services/Authentication.service";
+
+// External API for refreshing expired token
+// TODO: need clean up
+// TODO: add db validation for user fetching
 
 export const AuthorizationController = async (req, res) => {
-  const user = {
-    id: 1,
-    password: 'test',
-    username: 'user'
+
+  const {query: {oldToken}} = req;
+
+  const tokenDecode = await AuthenticationService.jsonDecode(oldToken);
+
+  const tokenConfiguration = {
+    id: tokenDecode.id,
+    roles: tokenDecode.rules
   };
 
+  const tokenExpDate = Math.floor(Date.now() / 1000) + (60 * 60);
+  const genToken = await AuthenticationService.genToken(tokenConfiguration, tokenExpDate);
 
-  await jwt.sign({user}, 'secretkey', {expiresIn: '5m'}, (err, token) => {
-    res.send({token});
-  });
+  res.send({token: genToken});
 };
 
 export const authRouterExporter = {
-  router: '/api/auth',
+  router: '/api/auth/refreshToken',
   middleware: [],
   handling: AuthorizationController
 };

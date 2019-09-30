@@ -12,3 +12,11 @@ const toCollect = (data, demension = 2) => {
 
   return resultArray;
 };
+
+
+export const sleep = delay => new Promise(resolve => {
+  setTimeout(() => {
+    // console.log('sleep');
+    resolve()
+  }, delay)
+}, delay);

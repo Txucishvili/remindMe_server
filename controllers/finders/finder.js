@@ -1,7 +1,6 @@
-import axios from "axios/index";
+import axios from "axios";
 import request from "request";
 import cheerio from "cheerio";
-
 
 // iMovie area
 
@@ -9,7 +8,7 @@ const iMovie_single_check = (id) => {
   const url = 'https://api.imovies.cc/api/v1/movies/' + id;
 
   return new Promise(async (resolve, reject) => {
-    return await axios.get(url)
+    await axios.get(url)
       .then(resp => {
         resolve(resp.data.data);
       }).catch(error => {
@@ -28,6 +27,7 @@ const iMovie_search = async (item) => {
     page: 1,
     per_page: 9
   };
+
   const iMovie_search_url = (config) => {
     const URL = '' +
       'https://api.imovies.cc/api/v1/search-advanced?' +
@@ -51,7 +51,7 @@ const iMovie_search = async (item) => {
   const url = iMovie_search_url(paramsConfig);
 
   return new Promise(async (resolve, reject) => {
-    return await axios.get(url)
+    await axios.get(url)
       .then(resp => {
         const data = resp && resp.data ? resp.data.data : [];
         const handling = data
@@ -68,7 +68,7 @@ const iMovie_find = async (data) => {
   let matchedItem;
   let returnData;
 
-  const iMovie_search_result = await iMovie_search(data);
+  const iMovie_search_result = await iMovie_search(data).then(resp => resp).catch(e => e);
 
   returnData = iMovie_search_result;
 
@@ -162,7 +162,7 @@ const adjaranet_find = async (data) => {
   let matchedItem;
   let returnData;
 
-  const search_result = await adjaranet_search_advanced(data);
+  const search_result = await adjaranet_search_advanced(data).then(r => r).catch(e => e);
 
   returnData = search_result;
 
@@ -209,9 +209,15 @@ const adjaranet_find = async (data) => {
 const checkTitle = async (data) => {
   let returnObj = {
     id: data.id,
-    iMovie: null,
+    iMovie: {
+      id: null,
+      isAdded: false
+    },
     iMDb: null,
-    adjaranet: null,
+    adjaranet: {
+      id: null,
+      isAdded: false
+    },
     valid: false,
     error: false,
   };
@@ -227,9 +233,6 @@ const checkTitle = async (data) => {
       isAdded: !!(iMovie_result.data.seasons && iMovie_result.data.seasons.data.length),
     };
     returnObj.iMDb = iMovie_result.data.imdbUrl;
-  } else {
-    returnObj.iMovie = null;
-    returnObj.iMDb = null;
   }
 
   if (!adjaranetResult.error && adjaranetResult.data.id) {
@@ -237,8 +240,6 @@ const checkTitle = async (data) => {
       id: adjaranetResult.data.id,
       isAdded: adjaranetResult.isAdded,
     };
-  } else {
-    returnObj.adjaranet = null;
   }
 
   return returnObj;

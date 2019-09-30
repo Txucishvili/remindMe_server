@@ -11,19 +11,53 @@ const TheaterTypes = gql`
         iMDb: String,
         iMovie: ResultObjItem
     }
+
+    type PostersObject {
+        aspect_ratio: String,
+        file_path: String,
+        height: String,
+        width: String,
+    }
+
+
+    type TrailerObject {
+        key: String,
+        name: String,
+        site: String,
+        size: String,
+        type: String,
+    }
     
     type TheaterItem {
-        id: String,
-        poster_path: String,
+        movieId: String,
+        adult: String,
+        backdrop_path: String,
+        original_language: String,
+        original_title: String,
+        title: String,
+        overview: String,
+        popularity: String,
         release_date: String,
-        result: ResultObj,
-        title: String
+        video: String,
+        vote_average: String,
+        vote_count: String,
+        poster_path: String,
+        posters: [PostersObject],
+        trailers: [TrailerObject],
+        genre_ids: [String],
+        isAvailable: Boolean,
+        color: String,
+        searchResult: FinderResultObject
+    }
+    
+    input fetchInputConfig {
+        finder: Boolean
     }
 
     type Query {
-        updateTheater: [TheaterItem]!
-        fetchTheater: [TheaterItem]!  @isAuth @roles(requires: ADMIN)
-        fetchMovieList: [TheaterItem]!
+        updateTheater: [TheaterItem]! @isAuth @roles(requires: ADMIN)
+        fetchTheater(data: fetchInputConfig): [TheaterItem]! @isAuth
+        fetchMovieList: [TheaterItem]! @isAuth
     }
 `;
 

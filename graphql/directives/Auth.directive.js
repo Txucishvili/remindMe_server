@@ -9,7 +9,7 @@ class AuthDirective extends SchemaDirectiveVisitor {
       let user;
       [root, {}, {user}] = args;
 
-      console.log('args', args);
+      // console.log('args', args);
 
       if (!user) {
         console.warn('User not authenticated');
