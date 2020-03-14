@@ -91,7 +91,7 @@ const server = new ApolloServer({
 });
 
 server.applyMiddleware({app, path: '/graphql'});
-
+console.log('process.env.PORT', process.env.PORT);
 // start
 app.listen(process.env.PORT || API_PORT, () => {
   console.log(`🚀 LISTENING ON PORT http://localhost:${API_PORT}`);

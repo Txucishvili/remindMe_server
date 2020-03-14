@@ -1,8 +1,5 @@
 import {authenticated} from "../helpers/Auth.guard";
 import {FetchAndCollectData} from "../../controllers/finders/movieDB-fetch";
-import ColorThief from 'color-thief';
-import axios from 'axios';
-import fs from 'fs';
 import {generateColor} from "../../utils/imageColor";
 import {fetchSingleMovie_API} from "../../controllers/finders/movieDB/movieDB_API";
 

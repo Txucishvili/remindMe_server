@@ -16,7 +16,6 @@ const AuthResolvers = {
       return {
         data: 'successfully logged out'
       }
-
     }
   },
   Mutation: {
