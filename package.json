@@ -6,13 +6,14 @@
   "scripts": {
     "express": "cross-env NODE_ENV=development nodemon --inspect index.js --exec babel-node",
     "dev": "NODE_ENV=development nodemon --inspect index.js --exec babel-node",
-    "prod": "NODE_ENV=production nodemon index.js --exec babel-node"
+    "prod": "NODE_ENV=production nodemon index.js --exec babel-node",
+    "start": "NODE_ENV=production npx babel-node index.js --exec"
   },
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "@babel/core": "^7.5.5",
-    "@babel/node": "^7.5.5",
+    "@babel/core": "^7.8.7",
+    "@babel/node": "^7.8.7",
     "@babel/preset-env": "^7.5.5",
     "axios": "^0.19.0",
     "body-parser": "^1.19.0",
