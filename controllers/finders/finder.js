@@ -103,13 +103,13 @@ const iMovie_find = async (data) => {
 
 // adjaranet area
 const adjaranet_search_advanced = (data) => {
-  const url = 'http://net.adjara.com/Home/quick_search?ajax=1&search=' +
+  const url = 'https://api.adjaranet.com/api/v1/search-advanced?movie_filters%5Bwith_actors%5D=3&movie_filters%5Bwith_directors%5D=1&filters%5Btype%5D=movie&keywords=' +
     encodeURIComponent(data.title.toLowerCase());
 
   return new Promise(async (resolve, reject) => {
     await axios.get(url)
       .then(resp => {
-        const data = resp && resp.data && resp.data.movies ? resp.data.movies.data : [];
+        const data = resp && resp.data && resp.data.data ? resp.data.data : [];
         const handling = data
           ? {error: false, errorType: 0, data: data}
           : {error: true, errorType: 1, data: []};
@@ -121,8 +121,10 @@ const adjaranet_search_advanced = (data) => {
 };
 
 const adjaranet_single_check = (url) => {
-  const URL = 'https://' + url.replace('//', '') + '&js=1';
+  // const URL = 'https://' + url.replace('//', '') + '&js=1';
+  const URL = url;
   const wordToMatch = 'გამოშვების წელი:';
+  // console.log('url', url);
 
   return new Promise(async (resolve, reject) => {
     await request(URL, async (error, response, body) => {
@@ -135,6 +137,8 @@ const adjaranet_single_check = (url) => {
         console.log('error occured');
         reject(error);
       }
+
+      // console.log('ADJARABNET LOAD', $);
 
       const isAdded = !!!$('.movieHiddenMessage').find('img').length;
       const yearTarget = $('.movie-full-list').find('span');
@@ -158,17 +162,51 @@ const adjaranet_single_check = (url) => {
   });
 };
 
+const adjaranet_single_API = async ({id}) => {
+
+  const url = 'https://api.adjaranet.com/api/v1/movies/' + id;
+
+  const matchedItem = await axios.get(url)
+      .then(resp => {
+        return resp.data.data || [];
+      }).catch(error => {
+        return {
+          error: error
+        }
+      });
+
+  // console.log('matchedItem', matchedItem);
+
+  return new Promise((resolve) => {
+    if (!matchedItem.error) {
+      resolve({
+        error: false,
+        isAdded: !!matchedItem.seasons && !!matchedItem.seasons.data.length,
+        data: matchedItem
+      });
+    } else {
+      resolve({
+        error: true,
+        isAdded: null,
+        data: null
+      });
+    }
+  })
+};
+
 const adjaranet_find = async (data) => {
   let matchedItem;
   let returnData;
 
   const search_result = await adjaranet_search_advanced(data).then(r => r).catch(e => e);
 
+  // console.log('search_result', search_result);
+
   returnData = search_result;
 
   if (!search_result.error && search_result.data) {
     matchedItem = search_result.data.find(itm => {
-      if (itm.id && itm.title_en
+      if (itm.id && itm.year === data.release_date && itm.secondaryName
         .toLowerCase()
         .replace(/\.+/g, ' ')
         .replace(/\s+/g, '_')
@@ -179,20 +217,18 @@ const adjaranet_find = async (data) => {
       }
     });
 
-    let isFullMatch = false;
     let adjaraSingleTargetResult;
 
     if (matchedItem) {
-      adjaraSingleTargetResult = await adjaranet_single_check(matchedItem.link);
-      const target_year = parseInt(adjaraSingleTargetResult.year, 10);
-
-      isFullMatch = target_year === parseInt(data.release_date, 10);
+      adjaraSingleTargetResult = await adjaranet_single_API({id:  matchedItem.id});
+      // console.log('[matchedItem]', matchedItem);
+      // console.log('[adjaraSingleTargetResult]', adjaraSingleTargetResult);
     }
 
-    if (isFullMatch) {
+    if (matchedItem) {
       returnData.isAdded = adjaraSingleTargetResult.isAdded;
       returnData.errorType = 0;
-      returnData.data = matchedItem;
+      returnData.data = adjaraSingleTargetResult.data;
     } else {
       returnData.error = true;
       returnData.errorType = 2;
@@ -225,8 +261,6 @@ const checkTitle = async (data) => {
   const iMovie_result = await iMovie_find(data);
   const adjaranetResult = await adjaranet_find(data);
 
-  // console.log(adjaranetResult);
-
   if (!iMovie_result.error && iMovie_result.data.id) {
     returnObj.iMovie = {
       id: iMovie_result.data.id,
@@ -236,8 +270,11 @@ const checkTitle = async (data) => {
   }
 
   if (!adjaranetResult.error && adjaranetResult.data.id) {
+    console.log('adjaranetResult', adjaranetResult);
+
     returnObj.adjaranet = {
-      id: adjaranetResult.data.id,
+      global_id: adjaranetResult.data.id,
+      id: adjaranetResult.data.adjaraId,
       isAdded: adjaranetResult.isAdded,
     };
   }
@@ -247,6 +284,8 @@ const checkTitle = async (data) => {
 
 const checkItems = async (data) => {
   let returnData = [];
+
+  console.log('HIT CHECKITEMS');
 
   for (const item of data) {
     const {id, title, release_date} = item;

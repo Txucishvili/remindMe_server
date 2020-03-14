@@ -1,14 +1,13 @@
 import jwt from "jsonwebtoken";
-import {Users} from "../mongoose/schemas";
 import bcrypt from "bcrypt-nodejs";
-import {UserInputError, AuthenticationError} from "apollo-server-express";
+import {config} from "../config/config";
 
 class AuthenticationService {
-  static saltRounds = 10;
+  static saltRounds = config.TOKEN_SALT;
 
-  static secret = 'secret_code_area';
-  static issuer = 'app_init';
-  static audience = 'app_record';
+  static secret = config.TOKEN_SECRET;
+  static issuer = config.TOKEN_ISSUER;
+  static audience = config.TOKEN_AUDIENCE;
 
   constructor(props) {
   }
@@ -93,7 +92,7 @@ class AuthenticationService {
 
   static genToken = (data, expires) => {
     expires = Math.floor(Date.now() / 1000) + (60 * 60);
-    const expires5Min = '5m';
+    const expires5Min = '10m';
 
     return jwt.sign(
       data,
@@ -104,7 +103,6 @@ class AuthenticationService {
         expiresIn: expires5Min
       });
   };
-
 }
 
 export default AuthenticationService;

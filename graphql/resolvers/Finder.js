@@ -18,17 +18,21 @@ const FinderResolvers = {
         };
         finderData = await checkTitle(checkTitleConfig);
 
-        // if (finderData.id === "516700") {
-        //   finderData.adjaranet = {
-        //     isAdded: true
-        //   };
-        // } else if (finderData.id === "593961") {
-        //   finderData.iMovie = {
-        //     isAdded: true
-        //   };
-        // }
+        // region:: example
 
-        const finderDataTarget = {
+        if (finderData.id === "423204") {
+          finderData.adjaranet = {
+            isAdded: true
+          };
+        } else if (finderData.id === "423204") {
+          finderData.iMovie = {
+            isAdded: true
+          };
+        }
+
+        // endregion
+
+        const finderDataSave = {
           movieId: finderData.id,
           adjaranet: finderData.adjaranet,
           iMovie: finderData.iMovie,
@@ -36,10 +40,10 @@ const FinderResolvers = {
         };
 
         if (!finderTargetDB) {
-          finderTargetDB = await new db.FinderModel(finderDataTarget).save();
+          finderTargetDB = await new db.FinderModel(finderDataSave).save();
         }
 
-        if (finderTargetDB.adjaranet.isAdded || finderTargetDB.iMovie.isAdded) {
+        if (!!finderTargetDB.adjaranet.isAdded || !!finderTargetDB.iMovie.isAdded) {
           console.log('catch updates', movieId);
           await db.Theater.update(
             {movieId},
@@ -59,9 +63,9 @@ const FinderResolvers = {
         // TODO: notification add
         // TODO: notification type sends (sms, email)
 
-        if (!finderTargetDB.adjaranet.isAdded && finderDataTarget.adjaranet.isAdded) {
+        if (!finderTargetDB.adjaranet.isAdded && finderDataSave.adjaranet.isAdded) {
           console.log('adjaranet catches ', item.title);
-        } else if (!finderTargetDB.iMovie.isAdded && finderDataTarget.iMovie.isAdded) {
+        } else if (!finderTargetDB.iMovie.isAdded && finderDataSave.iMovie.isAdded) {
           console.log('iMovie catches ', item.title);
         }
       }

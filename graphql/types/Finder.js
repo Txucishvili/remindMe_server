@@ -2,8 +2,9 @@ import {gql} from 'apollo-server-express';
 
 const FinderTypes = gql`  
     type FinderResultItemObject {
+        global_id: String,
         id: String,
-        isAdded: Boolean
+        isAdded: Boolean,
     }
 
     type FinderResultObject {

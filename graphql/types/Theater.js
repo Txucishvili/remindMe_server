@@ -19,13 +19,23 @@ const TheaterTypes = gql`
         width: String,
     }
 
-
     type TrailerObject {
         key: String,
         name: String,
         site: String,
         size: String,
         type: String,
+    }
+
+    type CastPersonObject {
+        cast_id: String,
+        character: String,
+        credit_id: String,
+        gender: String,
+        id: String,
+        order: String,
+        name: String,
+        profile_path: String,
     }
     
     type TheaterItem {
@@ -47,6 +57,7 @@ const TheaterTypes = gql`
         genre_ids: [String],
         isAvailable: Boolean,
         color: String,
+        cast: [CastPersonObject],
         searchResult: FinderResultObject
     }
     
@@ -57,6 +68,7 @@ const TheaterTypes = gql`
     type Query {
         updateTheater: [TheaterItem]! @isAuth @roles(requires: ADMIN)
         fetchTheater(data: fetchInputConfig): [TheaterItem]! @isAuth
+        fetchItem(id: String): TheaterItem! @isAuth
         fetchMovieList: [TheaterItem]! @isAuth
     }
 `;

@@ -1,0 +1,14 @@
+{
+  "name": "nodemon",
+  "nodemonConfig": {
+    "restartable": "rs",
+    "ignore": [
+      "node_modules/**/node_modules"
+    ],
+    "delay": "2500",
+    "env": {
+      "NODE_ENV": "development",
+      "NODE_CONFIG_DIR": "./environments"
+    }
+  }
+}
