@@ -8,9 +8,6 @@ import {schema} from './graphql/index';
 import {FinderModel, Reminders, Theater, Tokens, Users} from './mongoose/schemas';
 import AuthenticationService from "./services/Authentication.service";
 import {config, environment} from "./config/config";
-import webpackMiddleware from 'webpack-dev-middleware';
-import webpackConfig from './webpack.config';
-import webpack from 'webpack';
 
 console.log('config', config);
 
@@ -21,7 +18,6 @@ const mongooseURL = config.MONGO_URL;
 const API_PORT = config.APP_PORT;
 
 const app = express();
-// app.use(webpackMiddleware(webpack(webpackConfig)));
 
 mongoose.connect(mongooseURL, {useNewUrlParser: true, useFindAndModify: false});
 

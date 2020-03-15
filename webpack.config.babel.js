@@ -1,8 +1,18 @@
 const path = require("path");
+const fs = require("fs");
 const nodeExternals = require('webpack-node-externals');
+var nodeModules = {};
+
+fs.readdirSync('node_modules')
+  .filter(function(x) {
+    return ['.bin'].indexOf(x) === -1;
+  })
+  .forEach(function(mod) {
+    nodeModules[mod] = 'commonjs ' + mod;
+  });
 
 module.exports = (env, argv) => {
-  const jsFiles = ['babel-polyfill','./index.js'];
+  const jsFiles = ['babel-polyfill', './index.js'];
   return ({
     target: 'node',
     entry: [].concat(jsFiles),
@@ -11,7 +21,7 @@ module.exports = (env, argv) => {
       filename: "index.js",
     },
     mode: argv.mode,
-    externals: [ nodeExternals() ],
+    externals: [nodeModules],
     module: {
       rules: [
         {
