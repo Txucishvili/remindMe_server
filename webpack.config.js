@@ -1,7 +1,8 @@
 const path = require("path");
+const nodeExternals = require('webpack-node-externals');
 
 module.exports = (env, argv) => {
-  const jsFiles = ['./server.js'];
+  const jsFiles = ['./index.js'];
   return ({
     target: 'node',
     entry: [].concat(jsFiles),
@@ -10,18 +11,13 @@ module.exports = (env, argv) => {
       filename: "index.js",
     },
     mode: argv.mode,
+    externals: [ nodeExternals() ],
     module: {
       rules: [
         {
-          test: /\.m?js$/,
-          exclude: /(node_modules|bower_components)/,
-          use: {
-            loader: 'babel-loader',
-            options: {
-              presets: ['@babel/preset-env'],
-              plugins: ['@babel/plugin-proposal-object-rest-spread']
-            }
-          }
+          use: 'babel-loader',
+          test: /\.js$/,
+          exclude: /node_modules/
         },
         {
           test: /\.node$/,

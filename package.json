@@ -4,11 +4,13 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "express": "cross-env NODE_ENV=development nodemon --inspect index.js --exec babel-node",
+    "express": "cross-env NODE_ENV=development nodemon --inspect --exec babel-node index.js",
     "dev": "NODE_ENV=development nodemon --inspect index.js --exec babel-node",
     "prod": "NODE_ENV=production nodemon index.js --exec babel-node",
-    "build": "NODE_ENV=production webpack --mode production",
-    "start": "NODE_ENV=production node dist/index.js"
+    "-----": "",
+    "webpack": "BABEL_ENV=development webpack --watch --mode development --env.NODE_ENV=development",
+    "build": "BABEL_ENV=production webpack --mode production --env.NODE_ENV=production",
+    "start": "NODE_ENV=production babel-node dist/index.js"
   },
   "author": "",
   "license": "ISC",
@@ -30,7 +32,9 @@
     "node-loader": "^0.6.0",
     "nodemon": "^1.19.4",
     "webpack": "^4.42.0",
-    "webpack-cli": "^3.3.11"
+    "webpack-cli": "^3.3.11",
+    "webpack-dev-middleware": "^3.7.2",
+    "webpack-node-externals": "^1.7.2"
   },
   "dependencies": {
     "@babel/core": "^7.0.0",
