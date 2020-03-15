@@ -102,4 +102,3 @@ console.log('process.env.PORT', process.env.PORT);
 app.listen(process.env.PORT || API_PORT, () => {
   console.log(`🚀 LISTENING ON PORT http://localhost:${API_PORT}`);
 });
-require("babel-polyfill");
