@@ -21,7 +21,7 @@ module.exports = (env, argv) => {
       filename: "index.js",
     },
     mode: argv.mode,
-    externals: [nodeExternals(), nodeModules],
+    externals: [nodeExternals()],
     optimization: { sideEffects: false },
     module: {
       rules: [

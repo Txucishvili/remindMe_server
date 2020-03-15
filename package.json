@@ -5,7 +5,7 @@
   "main": "index.js",
   "engines": {
     "npm": "6.x"
-  },,
+  },
   "scripts": {
     "express": "cross-env NODE_ENV=development nodemon --inspect --exec babel-node index.js",
     "dev": "NODE_ENV=development nodemon --inspect index.js --exec babel-node",
