@@ -2,7 +2,7 @@ const path = require("path");
 const nodeExternals = require('webpack-node-externals');
 
 module.exports = (env, argv) => {
-  const jsFiles = ['./index.js'];
+  const jsFiles = ['babel-polyfill','./index.js'];
   return ({
     target: 'node',
     entry: [].concat(jsFiles),
