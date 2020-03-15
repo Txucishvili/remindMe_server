@@ -3,8 +3,6 @@ import {FetchAndCollectData} from "../../controllers/finders/movieDB-fetch";
 import {generateColor} from "../../utils/imageColor";
 import {fetchSingleMovie_API} from "../../controllers/finders/movieDB/movieDB_API";
 
-const FileSaver = require('file-saver');
-
 const TheaterResolvers = {
   Query: {
     updateTheater: authenticated(async (root, args, {user, db}) => {

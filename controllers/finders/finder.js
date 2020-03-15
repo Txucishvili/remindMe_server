@@ -1,3 +1,4 @@
+import axios from "axios";
 import request from "request";
 import cheerio from "cheerio";
 
@@ -7,7 +8,7 @@ const iMovie_single_check = (id) => {
   const url = 'https://api.imovies.cc/api/v1/movies/' + id;
 
   return new Promise(async (resolve, reject) => {
-    await fetch(url)
+    await axios.get(url)
       .then(resp => {
         resolve(resp.data.data);
       }).catch(error => {
@@ -50,7 +51,7 @@ const iMovie_search = async (item) => {
   const url = iMovie_search_url(paramsConfig);
 
   return new Promise(async (resolve, reject) => {
-    await fetch(url)
+    await axios.get(url)
       .then(resp => {
         const data = resp && resp.data ? resp.data.data : [];
         const handling = data
@@ -106,7 +107,7 @@ const adjaranet_search_advanced = (data) => {
     encodeURIComponent(data.title.toLowerCase());
 
   return new Promise(async (resolve, reject) => {
-    await fetch(url)
+    await axios.get(url)
       .then(resp => {
         const data = resp && resp.data && resp.data.data ? resp.data.data : [];
         const handling = data
@@ -165,14 +166,14 @@ const adjaranet_single_API = async ({id}) => {
 
   const url = 'https://api.adjaranet.com/api/v1/movies/' + id;
 
-  const matchedItem = await fetch(url)
-      .then(resp => {
-        return resp.data.data || [];
-      }).catch(error => {
-        return {
-          error: error
-        }
-      });
+  const matchedItem = await axios.get(url)
+    .then(resp => {
+      return resp.data.data || [];
+    }).catch(error => {
+      return {
+        error: error
+      }
+    });
 
   // console.log('matchedItem', matchedItem);
 
