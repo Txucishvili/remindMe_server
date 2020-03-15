@@ -16,4 +16,3 @@ environment = {
 };
 
 export {config, confVars, environment};
-
