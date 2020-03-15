@@ -3,9 +3,6 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
-  "engines": {
-    "npm": "6.x"
-  },
   "scripts": {
     "express": "cross-env NODE_ENV=development nodemon --inspect --exec babel-node index.js",
     "dev": "NODE_ENV=development nodemon --inspect index.js --exec babel-node",
@@ -18,7 +15,11 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "@babel/core": "^7.8.7",
+    "@babel/node": "^7.0.0",
+    "@babel/preset-env": "^7.8.7",
     "axios": "^0.19.2",
+    "babel-polyfill": "^6.26.0",
     "body-parser": "^1.19.0",
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
@@ -33,7 +34,6 @@
     "nodemon": "^1.19.4",
     "webpack": "^4.42.0",
     "webpack-cli": "^3.3.11",
-    "webpack-dev-middleware": "^3.7.2",
     "webpack-node-externals": "^1.7.2"
   },
   "dependencies": {
@@ -41,15 +41,10 @@
     "@babel/plugin-proposal-class-properties": "^7.8.3",
     "@babel/plugin-proposal-export-default-from": "^7.8.3",
     "@babel/plugin-proposal-export-namespace-from": "^7.8.3",
-    "@babel/node": "^7.0.0",
-    "@babel/preset-env": "^7.8.7",
-    "@babel/polyfill": "^7.8.7",
     "@graphql-modules/core": "^0.7.14",
     "@graphql-modules/utils": "^0.4.0",
     "apollo-server-express": "^2.11.0",
     "babel-loader": "^8.0.6",
-    "babel-polyfill": "^6.26.0",
-    "balanced-match": "^1.0.0",
     "bcrypt": "^3.0.8",
     "bcrypt-nodejs": "0.0.3",
     "cheerio": "^1.0.0-rc.3",
