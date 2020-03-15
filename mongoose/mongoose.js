@@ -10,7 +10,7 @@ class Mongoose {
   init(url) {
     // console.log('Mongoose init', url);
     this.DatabaseURL = url;
-    mongoose.connect(this.DatabaseURL, {useNewUrlParser: true});
+    mongoose.connect(this.DatabaseURL, {useNewUrlParser: true, useUnifiedTopology: true});
 
     this.db.once("open", () => console.log("🗂 MongoDB connected"));
     this.db.on("error", console.error.bind(console, "MongoDB connection error:"));

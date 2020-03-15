@@ -1,8 +1,6 @@
 const path = require("path");
 
 module.exports = (env, argv) => {
-  const isDevelopment = argv.mode === 'development';
-  console.log('[mode]', argv);
   const jsFiles = ['./index.js'];
   return ({
     target: 'node',
