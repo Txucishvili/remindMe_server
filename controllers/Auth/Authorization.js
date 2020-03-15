@@ -11,6 +11,10 @@ export const AuthorizationController = async (req, res) => {
 
   const tokenDecode = await AuthenticationService.jsonDecode(oldToken);
 
+  if (!tokenDecode) {
+    res.send({token: null});
+  }
+
   const tokenConfiguration = {
     id: tokenDecode.id,
     roles: tokenDecode.rules
