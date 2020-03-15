@@ -1,9 +1,6 @@
 import dotenv from 'dotenv';
-import path from 'path';
 
-console.log('--', path.join(__dirname, 'env'));
-
-const result = dotenv.config();
+const result = dotenv.config({path: '.env.' + process.env.NODE_ENV});
 
 if (result.error) {
   throw result.error;
