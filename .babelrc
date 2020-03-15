@@ -2,6 +2,7 @@
   "presets": [
     "@babel/preset-env"
   ],
+  "moduleId": "@babel/polyfill",
   "plugins": [
     "@babel/plugin-proposal-export-namespace-from",
     "@babel/plugin-proposal-export-default-from",
