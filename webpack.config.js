@@ -1,7 +1,7 @@
 const path = require("path");
 
 module.exports = (env, argv) => {
-  const jsFiles = ['./index.js'];
+  const jsFiles = ['./server.js'];
   return ({
     target: 'node',
     entry: [].concat(jsFiles),
