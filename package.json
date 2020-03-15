@@ -10,7 +10,7 @@
     "-----": "",
     "webpack": "BABEL_ENV=development webpack --watch --mode development --env.NODE_ENV=development",
     "build": "BABEL_ENV=production webpack --mode production --env.NODE_ENV=production",
-    "start": "NODE_ENV=production babel-node dist/index.js"
+    "start": "NODE_ENV=production node dist/index.js"
   },
   "author": "",
   "license": "ISC",
