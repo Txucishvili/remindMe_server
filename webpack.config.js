@@ -12,7 +12,7 @@ fs.readdirSync('node_modules')
   });
 
 module.exports = (env, argv) => {
-  const jsFiles = ['./index.js'];
+  const jsFiles = ['babel-polyfill', './index.js'];
   return ({
     target: 'node',
     entry: [].concat(jsFiles),
@@ -21,6 +21,7 @@ module.exports = (env, argv) => {
       filename: "index.js",
     },
     mode: argv.mode,
+    externals: [nodeExternals(), nodeModules],
     optimization: { sideEffects: false },
     module: {
       rules: [
