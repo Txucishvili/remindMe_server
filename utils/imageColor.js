@@ -1,4 +1,3 @@
-import axios from "axios";
 import ColorThief from "color-thief";
 import Color from "color";
 
@@ -33,7 +32,7 @@ const LightenColor = function(color, percent) {
 };
 
 const getBuffer = async (url) => {
-  const imageBuffer = await axios.get(url,
+  const imageBuffer = await fetch(url,
     {responseType: 'arraybuffer',})
     .then(response => response.data);
 
