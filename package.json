@@ -29,7 +29,7 @@
     "@babel/preset-env": "^7.8.7",
     "@graphql-modules/core": "^0.7.14",
     "@graphql-modules/utils": "^0.4.0",
-    "apollo-server-express": "^2.11.0",
+    "apollo-server-express": "^2.14.2",
     "babel-loader": "^8.0.6",
     "babel-polyfill": "^6.26.0",
     "bcrypt": "^3.0.8",
